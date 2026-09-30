@@ -27,7 +27,12 @@ jobs:
       security-events: write # for github/codeql-action/upload-sarif to upload SARIF results
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Run Datree policy check
         continue-on-error: true
         uses: datreeio/action-datree@de67ae7a5133d719dc794e1b75682cd4c5f94d8a
@@ -42,6 +47,6 @@ jobs:
           # Setting a SARIF output will generate a file named "datree.sarif" containing your test results
           cliArguments: "-o sarif"
       - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@b8d3b6e8af63cde30bdc382c0bc28114f4346c88 # v2.28.1
         with:
           sarif_file: datree.sarif

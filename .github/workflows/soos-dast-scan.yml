@@ -27,6 +27,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+permissions:
+  contents: read
+
 jobs:
   soos:
     permissions:
@@ -35,6 +38,11 @@ jobs:
     name: SOOS DAST Analysis
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+
       - name: Run SOOS DAST Analysis
         uses: soos-io/soos-dast-github-action@a7f2cb2dfd143cb3224712d902ca0a1da0198ea9
         with:
@@ -45,6 +53,6 @@ jobs:
           target_url: "https://www.example.com/"
           output_format: "sarif"
       - name: Upload SOOS DAST SARIF Report
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3.38.2
         with:
           sarif_file: results.sarif
